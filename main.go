@@ -30,5 +30,5 @@ func main() {
 	database.DBMigrate(DB)
 
 	r := router.SetupRouter()
-	r.Run(":8080")
+	r.Run(":" + os.Getenv("PGPORT"))
 }
