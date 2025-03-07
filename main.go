@@ -28,7 +28,7 @@ func main() {
 		panic(err)
 	}
 	database.DBMigrate(DB)
-
+	//testing
 	r := router.SetupRouter()
 	r.Run(":" + os.Getenv("PGPORT"))
 }
