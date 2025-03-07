@@ -1,52 +1,32 @@
 -- +migrate Up
 -- +migrate StatementBegin
 
-CREATE TABLE IF NOT EXISTS users (
-                                     id SERIAL PRIMARY KEY,
-                                     "firstName" VARCHAR(255),
-    lastName VARCHAR(255),
-    email VARCHAR(255) UNIQUE,
-    phoneNumber VARCHAR(50) UNIQUE,
-    roles VARCHAR(50),
-    password VARCHAR(255) NOT NULL
-    );
+-- Rename tables to use camelCase
+ALTER TABLE users RENAME TO "users";
+ALTER TABLE listings RENAME TO "listings";
+ALTER TABLE bookings RENAME TO "bookings";
+ALTER TABLE approvals RENAME TO "approvals";
 
-CREATE TABLE IF NOT EXISTS listings (
-                                        id SERIAL PRIMARY KEY,
-                                        hostId INTEGER,
-                                        title VARCHAR(255),
-    description TEXT,
-    location VARCHAR(255),
-    address VARCHAR(255),
-    maxPeople INTEGER,
-    pricePerNight INTEGER,
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    approvalStatus VARCHAR(50),
-    CONSTRAINT fk_host_id FOREIGN KEY (hostId) REFERENCES users(id) ON DELETE CASCADE
-    );
+-- Rename columns to enforce camelCase
+ALTER TABLE "users" RENAME COLUMN firstname TO "firstName";
+ALTER TABLE "users" RENAME COLUMN lastname TO "lastName";
+ALTER TABLE "users" RENAME COLUMN phonenumber TO "phoneNumber";
 
-CREATE TABLE IF NOT EXISTS bookings (
-                                        id SERIAL PRIMARY KEY,
-                                        guestId INTEGER,
-                                        listingId INTEGER,
-                                        persons INTEGER,
-                                        startDate TIMESTAMP,
-                                        endDate TIMESTAMP,
-                                        status VARCHAR(50),
-    CONSTRAINT fk_guest_id FOREIGN KEY (guestId) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_list_id FOREIGN KEY (listingId) REFERENCES listings(id) ON DELETE CASCADE
-    );
+ALTER TABLE "listings" RENAME COLUMN hostid TO "hostId";
+ALTER TABLE "listings" RENAME COLUMN maxpeople TO "maxPeople";
+ALTER TABLE "listings" RENAME COLUMN pricepernight TO "pricePerNight";
+ALTER TABLE "listings" RENAME COLUMN createdat TO "createdAt";
+ALTER TABLE "listings" RENAME COLUMN approvalstatus TO "approvalStatus";
 
-CREATE TABLE IF NOT EXISTS approvals (
-                                         id SERIAL PRIMARY KEY,
-                                         approvalTypeId INTEGER,
-                                         approvalType VARCHAR(50),
-    approverId INTEGER,
-    status VARCHAR(50),
-    createdAt TIMESTAMP,
-    updatedAt TIMESTAMP,
-    CONSTRAINT fk_approval_approver FOREIGN KEY (approverId) REFERENCES users(id) ON DELETE SET NULL
-    );
+ALTER TABLE "bookings" RENAME COLUMN guestid TO "guestId";
+ALTER TABLE "bookings" RENAME COLUMN listingid TO "listingId";
+ALTER TABLE "bookings" RENAME COLUMN startdate TO "startDate";
+ALTER TABLE "bookings" RENAME COLUMN enddate TO "endDate";
+
+ALTER TABLE "approvals" RENAME COLUMN approvaltypeid TO "approvalTypeId";
+ALTER TABLE "approvals" RENAME COLUMN approvaltype TO "approvalType";
+ALTER TABLE "approvals" RENAME COLUMN approverid TO "approverId";
+ALTER TABLE "approvals" RENAME COLUMN createdat TO "createdAt";
+ALTER TABLE "approvals" RENAME COLUMN updatedat TO "updatedAt";
 
 -- +migrate StatementEnd
-
