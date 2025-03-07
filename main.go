@@ -21,7 +21,7 @@ func main() {
 		panic("Error loading .env file")
 	}
 	psqlInfo := fmt.Sprintf(`host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`,
-		os.Getenv("DPGHOST"), os.Getenv("PGPORT"), os.Getenv("PGUSER"), os.Getenv("PGPASSWORD"), os.Getenv("PGDATABASE"))
+		os.Getenv("PGHOST"), os.Getenv("PGPORT"), os.Getenv("PGUSER"), os.Getenv("PGPASSWORD"), os.Getenv("PGDATABASE"))
 	DB, err = sql.Open("postgres", psqlInfo)
 	err = DB.Ping()
 	if err != nil {
