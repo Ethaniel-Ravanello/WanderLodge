@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
-	"time"
 	"wanderloge/database"
 	"wanderloge/repository"
 	"wanderloge/structs"
@@ -73,7 +72,7 @@ func CreateBooking(ctx *gin.Context) {
 		return
 	}
 
-	err = repository.CreateApproval(database.DbConnection, tempBooking.ListingId, "booking", nullApproverId, "pending", time.Now(), time.Now())
+	err = repository.CreateApproval(database.DbConnection, tempBooking.ListingId, "booking", nullApproverId, "pending")
 	if err != nil {
 		response = structs.Message{
 			Code:    http.StatusInternalServerError,

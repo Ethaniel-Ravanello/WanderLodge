@@ -1,6 +1,8 @@
 package router
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
@@ -8,6 +10,7 @@ func SetupRouter() *gin.Engine {
 	UserRouter(router)
 	ListingRouter(router)
 	BookingRouter(router)
+	AprrovalRouter(router)
 
 	return router
 }

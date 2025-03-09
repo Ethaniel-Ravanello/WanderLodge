@@ -58,9 +58,8 @@ func Signin(ctx *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	errString := repository.SignIn(database.DbConnection, loginUser.FirstName)
-	isPassValid := helpers.CheckPasswordHash(loginUser.Password, errString)
-	fmt.Println(errString)
+	userData := repository.SignIn(database.DbConnection, loginUser.Email)
+	isPassValid := helpers.CheckPasswordHash(loginUser.Password, userData.Password)
 	fmt.Println(isPassValid)
 
 	if !isPassValid {
@@ -72,7 +71,6 @@ func Signin(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, response)
 		return
 	}
-	userData, _ := repository.GetUserById(database.DbConnection, loginUser.Id, loginUser.FirstName)
 	newToken, err := helpers.GenerateToken(loginUser.FirstName, userData.Id, userData.Roles)
 
 	if err != nil {
@@ -155,6 +153,17 @@ func UpdateUser(ctx *gin.Context) {
 			Code:    http.StatusBadRequest,
 			Error:   true,
 			Message: err.Error(),
+			Data:    nil,
+		}
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	if tempUser.FirstName == "" || tempUser.LastName == "" || tempUser.Email == "" || tempUser.Password == "" || tempUser.PhoneNumber == 0 || tempUser.Roles == "" {
+		response = structs.Message{
+			Code:    http.StatusBadRequest,
+			Error:   true,
+			Message: "Invalid Request",
 			Data:    nil,
 		}
 		ctx.JSON(http.StatusBadRequest, response)

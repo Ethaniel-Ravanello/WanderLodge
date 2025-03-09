@@ -72,7 +72,7 @@ func CreateListing(ctx *gin.Context) {
 	response = structs.Message{
 		Code:    http.StatusOK,
 		Error:   false,
-		Message: "Listing created successfully",
+		Message: "Listing created successfully and sent for approval",
 		Data:    tempListing,
 	}
 	ctx.JSON(http.StatusOK, response)

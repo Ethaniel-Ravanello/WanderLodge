@@ -18,16 +18,18 @@ func SignUp(db *sql.DB, users structs.User) (int, error) {
 	return listingId, nil
 }
 
-func SignIn(db *sql.DB, userName string) string {
-	var hashPass string
-	sql := `SELECT "password" FROM users WHERE "firstName" = $1`
+func SignIn(db *sql.DB, userName string) structs.User {
+	var userData structs.User
 
-	errs := db.QueryRow(sql, userName).Scan(&hashPass)
-	if errs != nil {
-		return "Error Getting User Data"
+	sql := `SELECT * FROM users WHERE "email" = $1`
+
+	err := db.QueryRow(sql, userName).Scan(&userData.Id, &userData.FirstName, &userData.LastName, &userData.Email,
+		&userData.PhoneNumber, &userData.Roles, &userData.Password)
+	if err != nil {
+		panic(err)
 	}
 
-	return hashPass
+	return userData
 }
 
 func GetUsers(db *sql.DB) (users []structs.User, err error) {

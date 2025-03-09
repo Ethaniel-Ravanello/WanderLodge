@@ -9,7 +9,7 @@ import (
 func CreateListing(db *sql.DB, listing structs.Listing) (int, string, string, error) {
 	sqlStatement := `
 		INSERT INTO listings ("hostid", "title", "description", "location", "address", "maxPeople", "pricePerNight", "createdAt", "approvalStatus")
-		VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), $8)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), 'pending')
 		RETURNING id, "createdAt", "approvalStatus";`
 
 	var listingID int
@@ -17,10 +17,19 @@ func CreateListing(db *sql.DB, listing structs.Listing) (int, string, string, er
 	var approvedStatus string
 	err := db.QueryRow(sqlStatement,
 		listing.HostId, listing.Title, listing.Description, listing.Location,
-		listing.Address, listing.MaxPeople, listing.PricePerNight, "pending").Scan(&listingID, &createdAt, &approvedStatus)
+		listing.Address, listing.MaxPeople, listing.PricePerNight).Scan(&listingID, &createdAt, &approvedStatus)
 
 	if err != nil {
 		return 0, "", "", fmt.Errorf("error creating listing: %w", err)
+	}
+
+	approvalSQL := `
+		INSERT INTO approvals ("approvalTypeId", "approvalType", "status", "createdAt", "updatedAt")
+		VALUES ($1, 'listing', 'pending', NOW(), NOW()) RETURNING id;`
+
+	_, err = db.Exec(approvalSQL, listingID)
+	if err != nil {
+		return 0, "", "", fmt.Errorf("error creating approval entry: %w", err)
 	}
 
 	return listingID, createdAt, approvedStatus, nil
